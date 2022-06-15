@@ -1,37 +1,35 @@
 class Solution {
+
     public int cherryPickup(int[][] grid) {
-        int r = grid.length;
-        int c = grid[0].length;
-        int[][][] dp = new int[r][c][c];
-        return f(0, 0, c - 1, grid, dp);
-    }
-    
-    int f(int i, int j1, int j2, int[][] grid, int[][][] dp){
-        
-        int r = grid.length;
-        int c = grid[0].length;
-        
-        if(j1 < 0 || j2 < 0 || j1 >= c || j2 >= c){
-            return (int)Math.pow(-10,9);
-        }
-        
-        if(i == r - 1){
-            if(j1 == j2) return grid[i][j1];
-            else return grid[i][j1] + grid[i][j2];
-        }
-        
-        if(dp[i][j1][j2] != 0) return dp[i][j1][j2];
-        
-        int max = (int)Math.pow(-10, 9);
-        for(int dj1 = -1; dj1 <= +1; dj1++){
-            for(int dj2 = -1; dj2 <= +1; dj2++){
-                int val = 0;
-                if(j1 == j2) val = grid[i][j1];
-                else val = grid[i][j1] + grid[i][j2];
-                val += f(i + 1, j1 + dj1, j2 + dj2, grid, dp);
-                max = Math.max(max, val);
+        int m = grid.length;
+        int n = grid[0].length;
+        int dp[][][] = new int[m][n][n];
+
+        for (int row = m - 1; row >= 0; row--) {
+            for (int col1 = 0; col1 < n; col1++) {
+                for (int col2 = 0; col2 < n; col2++) {
+                    int result = 0;
+                    // current cell
+                    result += grid[row][col1];
+                    if (col1 != col2) {
+                        result += grid[row][col2];
+                    }
+                    // transition
+                    if (row != m - 1) {
+                        int max = 0;
+                        for (int newCol1 = col1 - 1; newCol1 <= col1 + 1; newCol1++) {
+                            for (int newCol2 = col2 - 1; newCol2 <= col2 + 1; newCol2++) {
+                                if (newCol1 >= 0 && newCol1 < n && newCol2 >= 0 && newCol2 < n) {
+                                    max = Math.max(max, dp[row + 1][newCol1][newCol2]);
+                                }
+                            }
+                        }
+                        result += max;
+                    }
+                    dp[row][col1][col2] = result;
+                }
             }
         }
-        return dp[i][j1][j2] = max;
+        return dp[0][0][n - 1];
     }
 }
