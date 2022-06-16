@@ -11,25 +11,22 @@ class Solution {
     }
     
    boolean f(int n, int arr[], int k){
-        boolean dp[][]= new boolean[n][k+1];
+       boolean[] prev = new boolean[k + 1];
+       prev[0] = true;
         
-        for(int i=0; i<n; i++){
-            dp[i][0] = true;
-            
-        }
-        
-        if(arr[0]<=k) dp[0][arr[0]] = true;
+        if(arr[0]<=k) prev[arr[0]] = true;
         
         for(int ind = 1; ind<n; ind++){
+            boolean[] curr = new boolean[k + 1];
+            curr[0] = true;
             for(int target= 1; target<=k; target++){
-                boolean notTaken = dp[ind-1][target];
+                boolean notTaken = prev[target];
                 boolean taken = false;
-                if(arr[ind]<=target) taken = dp[ind-1][target-arr[ind]];
-                dp[ind][target]= notTaken||taken;
-                
+                if(arr[ind]<=target) taken = prev[target-arr[ind]];
+                curr[target]= notTaken||taken;
             }
-            
+            prev = curr;
         }
-       return dp[n-1][k];
+       return prev[k];
    }
 }
